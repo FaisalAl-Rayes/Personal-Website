@@ -1,0 +1,15 @@
+FROM nginx:1.24.0-alpine3.17-slim
+
+# Removing the nginx configuration files that will be replaced by my own nginx configuration files.
+RUN rm /etc/nginx/conf.d/default.conf /etc/nginx/nginx.conf && \
+\
+# Installing shadow to have access to usermod command to be able to block shell access to root.
+    apk add --update --no-cache --virtual .build-deps shadow && \
+    usermod -s /usr/sbin/nologin root && \
+# Deleting the shadow package as it's job is done, and deleting the /var/cache/apk dir to have a slightly reduced image size.
+    apk del .build-deps shadow && \
+    rm -rf /var/cache/apk/*
+
+# Copying of the nginx configuration files tailored to this image.
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./proxy_config.conf.template /etc/nginx/templates/proxy_config.conf.template

@@ -1,0 +1,88 @@
+version: '3.9'
+
+services:
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile.proxy
+    container_name: proxy-server
+    volumes:
+      - web-static-data:/vol/web/static
+      - socket-volume:/run/gunicorn
+    environment:
+      - DOMAIN="localhost"
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - frontend
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile.web
+    container_name: django-server
+    volumes:
+      - web-static-data:/vol/web/static
+      - socket-volume:/run/gunicorn
+    depends_on:
+      - db
+      # - vault
+    restart: unless-stopped
+    networks:
+      - frontend
+      - backend
+
+  db:
+    build:
+      context: ./db
+      dockerfile: Dockerfile.db
+    container_name: db-server
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    secrets:
+      - db_user
+      - db_password
+    environment:
+      PGPORT: 5151
+      POSTGRES_DB: django_db
+      POSTGRES_USER: /run/secrets/db_user
+      POSTGRES_PASSWORD: /run/secrets/db_password
+    restart: unless-stopped
+    networks:
+      - backend
+
+  # vault:
+  #   build:
+  #     context: .
+  #     dockerfile: DockerFile.vault
+  #     secrets:
+  #       - django_web_env
+  #   container_name: vault-server
+  #   command: gunicorn myapp.wsgi:application --bind 0.0.0.0:8000
+  #   volumes:
+  #     - web-static-data:/home/django/Django_Project/static/
+  #   ports:
+  #     - "8001:8000"
+  #   depends_on:
+  #     - db
+  #   restart: unless-stopped
+  #   networks:
+  #     - backend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  web-static-data:
+  db-data:
+  socket-volume:
+
+secrets:
+  db_user:
+    file: ./.secrets/db_user.secret
+  db_password:
+    file: ./.secrets/db_password.secret

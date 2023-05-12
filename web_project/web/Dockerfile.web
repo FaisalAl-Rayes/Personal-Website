@@ -1,0 +1,88 @@
+# Builder image.
+FROM python:3.11-alpine AS Builder
+
+# Setting of the working directory of the builder image.
+WORKDIR /code
+
+# Copying of the python dependencies.
+COPY ./Pipfile* .
+
+# Installing pipenv.
+RUN pip install --upgrade pip pipenv && \
+\
+# Running pipenv requirements to get the common requirements.txt from the Pipfile.lock
+    pipenv requirements > requirements.txt && \
+# Building python wheel packages for the final image for faster and more efficient installation.
+    pip wheel --no-cache-dir --no-deps --wheel-dir /code/wheels -r requirements.txt
+
+
+# Final image.
+FROM python:3.11-alpine
+
+# Preventing python from buffering the python stdout and stderr to memory and instead be sent directly to the container log.
+ENV PYTHONUNBUFFERED 1
+# Preventing python from writing bytecode files (.pyc).
+ENV PYTHONDONTWEITEBYTECODE 1
+
+# Installing shadow to have access to usermod command to be able to block shell access to root.
+RUN apk add --update --no-cache --virtual .build-deps shadow && \
+    usermod -s /usr/sbin/nologin root && \
+# Deleting the shadow package as it's job is done, and deleting the /var/cache/apk dir to have a slightly reduced image size.
+    apk del .build-deps shadow && \
+    rm -rf /var/cache/apk/* && \
+# Creating an unprivileged user that is meant to handle the running of the application.
+    adduser --disabled-password --shell /bin/bash django
+    
+# RUN --mount=type=secret,id=django_web_env \
+#     echo "django:$(cat /run/secrets/django_web_env | grep -oP 'USER_PASSWORD=\K\w+')" | chpasswd 
+
+# Setting the working directory of the final image.
+WORKDIR /home/django/my-website-project
+
+# This is if you will be serving the running application to nginx through the network interface. See "#proxy_pass" in the "/proxy/proxy_config.conf.template" file.
+# EXPOSE 8000
+
+# Getting the wheels from the builder image for smoother and faster installation of the dependancies.
+COPY --from=Builder /code/wheels /wheels
+
+# Setting up the python virtual environment.
+RUN python -m venv /opt/venv && \
+\
+# Upgrading pip and installing the dependancies through the built wheels from the builder image.
+    /opt/venv/bin/pip install --upgrade pip && \
+    /opt/venv/bin/pip install --no-cache /wheels/* && \
+# Setting up the application static files volume.
+    mkdir -p /vol/web/static && \
+# TODO: this should map to some mount point for Amazon S3, digitalocean spaces (which is based on S3 anyways haha), etc.
+    mkdir -p /vol/web/media && \
+# Creating the mount point for the gunicorn socket file (gunicorn.sock), and changing the ownership to the unprivileged user.
+    mkdir -p /run/gunicorn && \
+    chown -R django:django /run/gunicorn && \
+# Creating a space for gunicorn access and error logs, and changing the ownership to the unprivileged user.
+    mkdir -p /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log && \
+    chown -R django:django /var/log/gunicorn && \
+# Setting basic permissions for the /vol directory recursively.
+    chmod 755 -R /vol
+
+# Copying the content of the django project and the .env file into the working directory.
+COPY ./Django_Project/ .
+COPY ./.env .
+
+# Granting the ownership of the content in /home/django to the unprivileged user recursively.
+RUN chown -R django:django /home/django/ && \
+\
+# Collecting static files to gather up at the static root which is the static files volume.
+    /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
+
+# Set the unprivileged user as the working user to run this container. 
+USER django
+
+# Serving the application through gunicorn through the gunicorn.sock socket file, alternatively you can use the network which is commented out.
+CMD /opt/venv/bin/gunicorn MyWebsite.wsgi:application \
+                           --bind unix:/run/gunicorn/gunicorn.sock \
+                           #  --bind 0.0.0.0:8000 \
+                           --workers 3 \
+                           --timeout 120 \
+                           --log-level info \
+                           --access-logfile /var/log/gunicorn/access.log \
+                           --error-logfile /var/log/gunicorn/error.log
