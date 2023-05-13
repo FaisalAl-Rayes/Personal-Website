@@ -39,9 +39,6 @@ RUN apk add --update --no-cache --virtual .build-deps shadow && \
 # Setting the working directory of the final image.
 WORKDIR /home/django/my-website-project
 
-# This is if you will be serving the running application to nginx through the network interface. See "#proxy_pass" in the "/proxy/proxy_config.conf.template" file.
-# EXPOSE 8000
-
 # Getting the wheels from the builder image for smoother and faster installation of the dependancies.
 COPY --from=Builder /code/wheels /wheels
 
@@ -74,13 +71,18 @@ RUN chown -R django:django /home/django/ && \
 # Collecting static files to gather up at the static root which is the static files volume.
     /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
 
+
 # Set the unprivileged user as the working user to run this container. 
 USER django
 
+# This is if you will be serving the running application to nginx through the network interface. See "proxy_pass http://web:8000;" in the "/proxy/proxy_config.conf.template" file.
+# EXPOSE 8000
+
 # Serving the application through gunicorn through the gunicorn.sock socket file, alternatively you can use the network which is commented out.
+# Note the commented out bind is just to make sure that it is targeted to the reverse proxy.
 CMD /opt/venv/bin/gunicorn MyWebsite.wsgi:application \
                            --bind unix:/run/gunicorn/gunicorn.sock \
-                           #  --bind 0.0.0.0:8000 \
+                        #    --bind 172.20.0.101:8000 \
                            --workers 3 \
                            --timeout 120 \
                            --log-level info \
