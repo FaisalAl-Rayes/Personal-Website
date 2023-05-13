@@ -1,17 +1,25 @@
 server {
-    listen       80;
-    listen  [::]:80;
-    server_name  ${DOMAIN};
+    listen          80;
+    listen          [::]:80;
+    server_name     ${DOMAIN};
 
-    access_log  /var/log/nginx/host.access.log;
-    error_log  /var/log/nginx/host.error.log;
+    access_log      /var/log/nginx/host.access.log;
+    error_log       /var/log/nginx/host.error.log;
 
+    location /metrics {
+        allow       172.20.0.102;
+        deny        all;
+    
+        proxy_pass          http://unix:run/gunicorn/gunicorn.sock;
+        #proxy_pass          http://web:8000;
+    }
+    
     location /static {
-        alias /vol/web/static;
+        alias       /vol/web/static;
     }
     
     location / {
-        try_files $uri @proxy_to_app;
+        try_files   $uri @proxy_to_app;
     }
 
     location @proxy_to_app {
