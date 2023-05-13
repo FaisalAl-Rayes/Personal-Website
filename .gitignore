@@ -131,6 +131,9 @@ venv.bak/
 # Secret files (Mainly using them for docker-compose secrets)
 *.secret
 
+# data folders
+data/
+
 # Spyder project settings
 .spyderproject
 .spyproject
