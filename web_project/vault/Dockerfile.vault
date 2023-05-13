@@ -2,10 +2,21 @@
 
 FROM hashicorp/vault:latest
 
-RUN useradd --create-home --shell /bin/bash vault && \
-    chsh -s /usr/sbin/nologin root
+# Installing shadow to have access to usermod command to be able to block shell access to root.
+RUN apk add --update --no-cache --virtual .build-deps shadow && \
+    usermod -s /usr/sbin/nologin root && \
+# Deleting the shadow package as it's job is done, and deleting the /var/cache/apk dir to have a slightly reduced image size.
+    apk del .build-deps shadow && \
+    rm -rf /var/cache/apk/* && \
+# Creating an unprivileged user that is meant to handle the running of container.
+    adduser --disabled-password --shell /bin/bash unprivileged-user
 
-COPY config.hcl /vault/config.d/config.hcl
+# Copy the vault config file.
+COPY ./config.hcl /vault/config/config.hcl
 
-ENTRYPOINT ["vault", "server", "-config=/vault/config/config.hcl"]
-CMD ["audit-enable", "file", "file_path=/vault/file/audit.log"]
+# Set the unprivileged user as the working user to run this container.
+# USER unprivileged-user
+
+CMD tail -f /dev/null
+# ENTRYPOINT vault server -config=/vault/config/config.hcl
+# CMD audit-enable file file_path=/vault/file/audit.log
