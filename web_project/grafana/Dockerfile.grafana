@@ -1,0 +1,5 @@
+FROM grafana/grafana:main
+
+# TODO: Add the grafana.ini file for a more advanced setup.
+
+USER grafana

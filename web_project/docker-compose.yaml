@@ -72,6 +72,22 @@ services:
         ipv4_address: 172.20.0.102
       internal-network:
 
+  grafana:
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile.grafana
+    container_name: grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    networks:
+      - external-network
+      - internal-network
+
   # vault:
   #   build:
   #     context: .
@@ -107,6 +123,7 @@ volumes:
   web-static-data:
   db-data:
   prometheus-data:
+  grafana-data:
 
 secrets:
   db_user:
