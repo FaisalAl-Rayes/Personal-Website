@@ -29,10 +29,15 @@ You can connect with me through LinkedIn using the link the following link: [![L
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
+    <li>
+      <a href="#usage">Usage</a>
+      <ul>
+        <li><a href="#prometheus">Prometheus</a></li>
+        <li><a href="#grafana">Grafana</a></li>
+      </ul>
+    </li>
     <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+    <!-- <li><a href="#license">License</a></li> -->
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
@@ -78,28 +83,32 @@ respectively.
 
 * Ensure that docker and docker compose work by getting a response that looks like this
   ```sh
-  ~ $ docker --version
+  ~$ docker --version
   Docker version XX.XX.XX ...
-
-  ~ $ docker compose version
+  ```
+  ```sh
+  ~$ docker compose version
   Docker Compose version vX.XX.X ...
   ```
 
 ### Installation
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repository
    ```sh
    git clone https://github.com/FaisalAl-Rayes/Personal-Website.git
    ```
-3. Install NPM packages
+
+2. Remove the suffix of ".example" from all files that have it. For instance
    ```sh
-   npm install
+   ".env.example" file should be renamed to ".env"
+   "db_password.secret.example" file should be renamed to "db_password.secret"
    ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+
+3. Enter your desired values to these former "*.example" files for example in `web_project/web/.env` (Should be done to all the *.example files)
+   ```sh
+   "DATABASE_NAME=YOUR_DB_NAME" ---> "DATABASE_NAME=somename"
    ```
+   NOTE:  If you want to run it with the dummy values in the *.example files then just step 2 should be enough.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -108,27 +117,47 @@ respectively.
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+In this section you can see how to check how to use some additions to the website such as prometheus and grafana.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Prometheus
+* Go to `http://localhost:9090/targets?search=` and you should see the following
+   ![prometheus-targets][prometheus-targets]
+
+### Grafana
+1. Go to `http://localhost:3000` and you should see the following
+   ![grafana-login][grafana-login]
+
+2. Login with username `admin` and password `admin` (yes the username and password are the same)
+    ```sh
+    Email or username: admin
+    Password: admin
+    ```
+
+3. You will be prompted to change the password so do so
+    ```sh
+    New password: YOUR_PASSWORD
+    Confirm new password: YOUR_PASSWORD
+    ```
+
+4. Now you should be in the welcome panel
+    ![grafana-welcome-page][grafana-welcome-page]
+
+5. Click on `DATA SOURCES` and the select `Prometheus`
+
+6. Set `Prometheus server URL` to `http://prometheus:9090` then scroll down and click on `Save & test`
+
+7. Click on the `Import dashboard` shown below
+    ![grafana-datasources][grafana-datasources]
+
+8. Enter `17658` in the `Import via grafana.com` section to get the <a href="https://grafana.com/grafana/dashboards/17658-django/">django prometheus dashboard</a> then click on the `Load` button as shown below
+    ![grafana-import-dashboard][grafana-import-dashboard]
+
+9. Select `Prometheus (default)` in the `Select a Prometheus data source` dropdown menu and then click on `Import` and you will see the dashboard displayed as seen below
+    ![grafana-django-prometheus-dashboard][grafana-django-prometheus-dashboard]
+
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
-    - [ ] Nested Feature
-
-See the [open issues](https://github.com/FaisalAl-Rayes/Personal-Website/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
@@ -148,32 +177,27 @@ Don't forget to give the project a star! Thanks again!
 
 
 
-<!-- LICENSE -->
+<!-- LICENSE 
 ## License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
+-->
 
 
 <!-- CONTACT -->
 ## Contact
+Connect with me on 
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/FaisalAl-Rayes/Personal-Website](https://github.com/FaisalAl-Rayes/Personal-Website)
+[![LinkedIn][linkedin-shield]][linkedin-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
 
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-* []()
-* []()
-* []()
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -186,6 +210,13 @@ Project Link: [https://github.com/FaisalAl-Rayes/Personal-Website](https://githu
 [linkedin-url]: https://linkedin.com/in/faisalalrayyess
 
 [website-preview]: readme_images/website_preview.png
+[prometheus-targets]: readme_images/prometheus_targets.png
+[grafana-login]: readme_images/grafana_login.png
+[grafana-dashboard]: readme_images/grafana_dashboard.png
+[grafana-welcome-page]: readme_images/grafana_welcome_page.png
+[grafana-datasources]: readme_images/grafana_datasources.png
+[grafana-import-dashboard]: readme_images/grafana_import_dashboard.png
+[grafana-django-prometheus-dashboard]: readme_images/grafana_django_prometheus_dashboard.png
 
 [Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=white
 [Python-url]: https://www.python.org/
