@@ -22,4 +22,5 @@ urlpatterns = [
     path(f"{config('SECRET_ADMIN_URL', default='')}/admin/", admin.site.urls),
     path("", include("home.urls")),
     path("blog/", include("blog.urls")),
+    path("", include("django_prometheus.urls")),
 ]

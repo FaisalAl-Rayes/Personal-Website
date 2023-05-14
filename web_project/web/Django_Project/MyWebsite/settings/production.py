@@ -6,7 +6,7 @@ DEBUG = False
 
 STATIC_ROOT =  "/vol/web/static"
 
-ALLOWED_HOSTS = ["localhost"]
+ALLOWED_HOSTS = ["localhost", "web", "proxy"]
 
 DATABASES = {
     "default": {
