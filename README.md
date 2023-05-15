@@ -198,6 +198,8 @@ Connect with me on
 ## Acknowledgments
 
 * [Best-README-Template](https://github.com/othneildrew/Best-README-Template/)
+* [HTML5 UP](https://www.html5up.net/)
+* [Django Prometheus Exporter Dashboard for Grafana](https://www.grafana.com/grafana/dashboards/17658-django/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -209,14 +211,14 @@ Connect with me on
 [linkedin-shield]: https://img.shields.io/badge/linkedin-0769AD?style=for-the-badge&logo=linkedin&logoColor=white
 [linkedin-url]: https://linkedin.com/in/faisalalrayyess
 
-[website-preview]: readme_images/website_preview.png
-[prometheus-targets]: readme_images/prometheus_targets.png
-[grafana-login]: readme_images/grafana_login.png
-[grafana-dashboard]: readme_images/grafana_dashboard.png
-[grafana-welcome-page]: readme_images/grafana_welcome_page.png
-[grafana-datasources]: readme_images/grafana_datasources.png
-[grafana-import-dashboard]: readme_images/grafana_import_dashboard.png
-[grafana-django-prometheus-dashboard]: readme_images/grafana_django_prometheus_dashboard.png
+[website-preview]: readme_images/Website/preview.png
+[prometheus-targets]: readme_images/Prometheus/targets.png
+[grafana-login]: readme_images/Grafana//login.png
+[grafana-dashboard]: readme_images/Grafana//dashboard.png
+[grafana-welcome-page]: readme_images/Grafana//welcome_page.png
+[grafana-datasources]: readme_images/Grafana//datasources.png
+[grafana-import-dashboard]: readme_images/Grafana//import_dashboard.png
+[grafana-django-prometheus-dashboard]: readme_images/Grafana//django_prometheus_dashboard.png
 
 [Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=white
 [Python-url]: https://www.python.org/
