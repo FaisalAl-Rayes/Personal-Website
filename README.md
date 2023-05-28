@@ -61,6 +61,7 @@ This is a project to share my approach to building my own website using many dif
 * [![Python][Python]][Python-url]
 * [![Django][Django]][Django-url]
 * [![Docker][Docker]][Docker-url]
+* [![Kubernetes][Kubernetes]][Kubernetes-url]
 * [![Gunicorn][Gunicorn]][Gunicorn-url]
 * [![PostgreSQL][PostgreSQL]][PostgreSQL-url]
 * [![Prometheus][Prometheus]][Prometheus-url]
@@ -220,7 +221,7 @@ Connect with me on
 [grafana-import-dashboard]: readme_images/Grafana//import_dashboard.png
 [grafana-django-prometheus-dashboard]: readme_images/Grafana//django_prometheus_dashboard.png
 
-[Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=white
+[Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=ffd343
 [Python-url]: https://www.python.org/
 
 [Django]: https://img.shields.io/badge/django-092e20?style=for-the-badge&logo=django&logoColor=white
@@ -228,6 +229,9 @@ Connect with me on
 
 [Docker]: https://img.shields.io/badge/docker-0769AD?style=for-the-badge&logo=docker&logoColor=white
 [Docker-url]: https://www.docker.com/
+
+[kubernetes]: https://img.shields.io/badge/kubernetes-F5F5F5?style=for-the-badge&logo=kubernetes&logoColor=3970e4
+[kubernetes-url]: https://www.kubernetes.io/
 
 [Prometheus]: https://img.shields.io/badge/prometheus-f4581e?style=for-the-badge&logo=prometheus&logoColor=white
 [Prometheus-url]: https://www.prometheus.io/
