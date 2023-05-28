@@ -8,9 +8,9 @@ services:
     container_name: proxy-server
     volumes:
       - web-static-data:/vol/web/static
-      - socket-volume:/run/gunicorn
+      - gunicorn-socket-volume:/run/gunicorn
     environment:
-      - DOMAIN="localhost"
+      DOMAIN: localhost
     ports:
       - "80:80"
     depends_on:
@@ -27,7 +27,11 @@ services:
     container_name: django-server
     volumes:
       - web-static-data:/vol/web/static
-      - socket-volume:/run/gunicorn
+      - gunicorn-socket-volume:/run/gunicorn
+    env_file:
+      - ./.shared_secrets/django_db.env
+      - ./web/.env
+    command: /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
     depends_on:
       - db
       # - vault
@@ -43,14 +47,9 @@ services:
     container_name: db-server
     volumes:
       - db-data:/var/lib/postgresql/data
-    secrets:
-      - db_user
-      - db_password
-    environment:
-      PGPORT: 5151
-      POSTGRES_DB: django_db
-      POSTGRES_USER: /run/secrets/db_user
-      POSTGRES_PASSWORD: /run/secrets/db_password
+    env_file:
+      - ./.shared_secrets/django_db.env
+      - ./db/.env
     restart: unless-stopped
     networks:
       - internal-network
@@ -88,24 +87,6 @@ services:
       - external-network
       - internal-network
 
-  # vault:
-  #   build:
-  #     context: .
-  #     dockerfile: DockerFile.vault
-  #     secrets:
-  #       - django_web_env
-  #   container_name: vault-server
-  #   command: gunicorn myapp.wsgi:application --bind 0.0.0.0:8000
-  #   volumes:
-  #     - web-static-data:/home/django/Django_Project/static/
-  #   ports:
-  #     - "8001:8000"
-  #   depends_on:
-  #     - db
-  #   restart: unless-stopped
-  #   networks:
-  #     - backend
-
 networks:
   external-network:
     ipam:
@@ -119,14 +100,8 @@ networks:
         - subnet: 172.21.0.0/24
 
 volumes:
-  socket-volume:
+  gunicorn-socket-volume:
   web-static-data:
   db-data:
   prometheus-data:
   grafana-data:
-
-secrets:
-  db_user:
-    file: ./.secrets/db_user.secret
-  db_password:
-    file: ./.secrets/db_password.secret
