@@ -32,9 +32,6 @@ RUN apk add --update --no-cache --virtual .build-deps shadow && \
     rm -rf /var/cache/apk/* && \
 # Creating an unprivileged user that is meant to handle the running of the application.
     adduser --disabled-password --shell /bin/bash django
-    
-# RUN --mount=type=secret,id=django_web_env \
-#     echo "django:$(cat /run/secrets/django_web_env | grep -oP 'USER_PASSWORD=\K\w+')" | chpasswd 
 
 # Setting the working directory of the final image.
 WORKDIR /home/django/my-website-project
