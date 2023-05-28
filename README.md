@@ -221,7 +221,7 @@ Connect with me on
 [grafana-import-dashboard]: readme_images/Grafana//import_dashboard.png
 [grafana-django-prometheus-dashboard]: readme_images/Grafana//django_prometheus_dashboard.png
 
-[Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=ffd343
+[Python]: https://img.shields.io/badge/python-306998?style=for-the-badge&logo=python&logoColor=white
 [Python-url]: https://www.python.org/
 
 [Django]: https://img.shields.io/badge/django-092e20?style=for-the-badge&logo=django&logoColor=white
