@@ -52,25 +52,21 @@ RUN python -m venv /opt/venv && \
     mkdir -p /vol/web/static && \
 # TODO: this should map to some mount point for Amazon S3, digitalocean spaces (which is based on S3 anyways haha), etc.
     mkdir -p /vol/web/media && \
-# Creating the mount point for the gunicorn socket file (gunicorn.sock), and changing the ownership to the unprivileged user.
+# Setting basic permissions for the /vol directory recursively, and changing the ownership of /vol to the unprivileged user.
+    chown -R django:django /vol && \
+    chmod 755 -R /vol && \
+# Creating the mount point for the gunicorn socket file (gunicorn.sock), and changing the ownership of /run/gunicorn to the unprivileged user.
     mkdir -p /run/gunicorn && \
     chown -R django:django /run/gunicorn && \
-# Creating a space for gunicorn access and error logs, and changing the ownership to the unprivileged user.
+# Creating a space for gunicorn access and error logs, and changing the ownership of /var/log/gunicorn to the unprivileged user.
     mkdir -p /var/log/gunicorn && touch /var/log/gunicorn/access.log && touch /var/log/gunicorn/error.log && \
-    chown -R django:django /var/log/gunicorn && \
-# Setting basic permissions for the /vol directory recursively.
-    chmod 755 -R /vol
+    chown -R django:django /var/log/gunicorn
 
-# Copying the content of the django project and the .env file into the working directory.
+# Copying the content of the django project into the working directory.
 COPY ./Django_Project/ .
-COPY ./.env .
 
 # Granting the ownership of the content in /home/django to the unprivileged user recursively.
-RUN chown -R django:django /home/django/ && \
-\
-# Collecting static files to gather up at the static root which is the static files volume.
-    /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
-
+RUN chown -R django:django /home/django/ 
 
 # Set the unprivileged user as the working user to run this container. 
 USER django
@@ -78,13 +74,16 @@ USER django
 # This is if you will be serving the running application to nginx through the network interface. See "proxy_pass http://web:8000;" in the "/proxy/proxy_config.conf.template" file.
 # EXPOSE 8000
 
+# Collecting static files to gather up at the static root which is the static files volume.
 # Serving the application through gunicorn through the gunicorn.sock socket file, alternatively you can use the network which is commented out.
-# Note the commented out bind is just to make sure that it is targeted to the reverse proxy.
-CMD /opt/venv/bin/gunicorn MyWebsite.wsgi:application \
-                           --bind unix:/run/gunicorn/gunicorn.sock \
-                        #    --bind 172.20.0.101:8000 \
-                           --workers 3 \
-                           --timeout 120 \
-                           --log-level info \
-                           --access-logfile /var/log/gunicorn/access.log \
-                           --error-logfile /var/log/gunicorn/error.log
+# Note that the commented out bind is just to make sure that it is targeted to the reverse proxy.
+ENTRYPOINT /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput && \
+           /opt/venv/bin/gunicorn MyWebsite.wsgi:application \
+                                  --bind unix:/run/gunicorn/gunicorn.sock \
+                                #   --bind 172.20.0.101:8000 \
+                                  --workers 3 \
+                                  --timeout 120 \
+                                  --log-level info \
+                                  --access-logfile /var/log/gunicorn/access.log \
+                                  --error-logfile /var/log/gunicorn/error.log
+
