@@ -3,7 +3,7 @@ version: '3.9'
 services:
   proxy:
     build:
-      context: ./proxy
+      context: ../../web_project/proxy
       dockerfile: Dockerfile.proxy
     container_name: proxy-server
     volumes:
@@ -22,15 +22,15 @@ services:
 
   web:
     build:
-      context: ./web
+      context: ../../web_project/web
       dockerfile: Dockerfile.web
     container_name: django-server
     volumes:
       - web-static-data:/vol/web/static
       - gunicorn-socket-volume:/run/gunicorn
     env_file:
-      - ./.shared_secrets/django_db.env
-      - ./web/.env
+      - ../../web_project/.shared_secrets/django_db.env
+      - ../../web_project/web/.env
     command: /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
     depends_on:
       - db
@@ -42,21 +42,21 @@ services:
 
   db:
     build:
-      context: ./db
+      context: ../../web_project/db
       dockerfile: Dockerfile.db
     container_name: db-server
     volumes:
       - db-data:/var/lib/postgresql/data
     env_file:
-      - ./.shared_secrets/django_db.env
-      - ./db/.env
+      - ../../web_project/.shared_secrets/django_db.env
+      - ../../web_project/db/.env
     restart: unless-stopped
     networks:
       - internal-network
 
   prometheus:
     build:
-      context: ./prometheus
+      context: ../../web_project/prometheus
       dockerfile: Dockerfile.prometheus
     container_name: prometheus
     volumes:
@@ -73,7 +73,7 @@ services:
 
   grafana:
     build:
-      context: ./grafana
+      context: ../../web_project/grafana
       dockerfile: Dockerfile.grafana
     container_name: grafana
     volumes:
