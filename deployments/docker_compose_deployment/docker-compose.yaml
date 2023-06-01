@@ -31,7 +31,6 @@ services:
     env_file:
       - ../../web_project/.shared_secrets/django_db.env
       - ../../web_project/web/.env
-    command: /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput
     depends_on:
       - db
       # - vault

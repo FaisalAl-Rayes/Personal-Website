@@ -62,25 +62,15 @@ RUN python -m venv /opt/venv && \
 # Copying the content of the django project into the working directory.
 COPY ./Django_Project/ .
 
+# Copying the script files.
+COPY ./scripts/ .
+
 # Granting the ownership of the content in /home/django to the unprivileged user recursively.
 RUN chown -R django:django /home/django/ 
 
 # Set the unprivileged user as the working user to run this container. 
 USER django
 
-# This is if you will be serving the running application to nginx through the network interface. See "proxy_pass http://web:8000;" in the "/proxy/proxy_config.conf.template" file.
-# EXPOSE 8000
-
-# Collecting static files to gather up at the static root which is the static files volume.
-# Serving the application through gunicorn through the gunicorn.sock socket file, alternatively you can use the network which is commented out.
-# Note that the commented out bind is just to make sure that it is targeted to the reverse proxy.
-ENTRYPOINT /opt/venv/bin/python /home/django/my-website-project/manage.py collectstatic --noinput && \
-           /opt/venv/bin/gunicorn MyWebsite.wsgi:application \
-                                  --bind unix:/run/gunicorn/gunicorn.sock \
-                                #   --bind 172.20.0.101:8000 \
-                                  --workers 3 \
-                                  --timeout 120 \
-                                  --log-level info \
-                                  --access-logfile /var/log/gunicorn/access.log \
-                                  --error-logfile /var/log/gunicorn/error.log
-
+# The entry point to serve the website.
+ENTRYPOINT sh /home/django/my-website-project/entrypoint.sh
+# ENTRYPOINT tail -f /dev/null
