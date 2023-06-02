@@ -130,6 +130,7 @@ venv.bak/
 
 # Secret files (Mainly using them for docker-compose secrets)
 *.secret
+*.secrets
 
 # data folders
 data/
