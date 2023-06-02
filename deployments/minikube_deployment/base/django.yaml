@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-web-deployment
+  labels:
+    app: django
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: django
+  template:
+    metadata:
+      labels:
+        app: django
+    spec:
+      containers:
+      - name: django
+        image: coming soon
+        imagePullPolicy: Always
+        envFrom:
+          - secretRef:
+              name: django-env
+          - secretRef:
+              name: database-env
+        env:
+          - name: PORT
+            value: "8002"
+        ports:
+        - containerPort: 8002
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "0.2"
+      imagePullSecrets:
+        - name: cfe-k8s   
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-web-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8002
+  selector:
+    app: django

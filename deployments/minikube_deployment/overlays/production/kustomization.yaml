@@ -1,0 +1,22 @@
+bases:
+  - ../../base
+  - namespace.yaml
+
+namespace: development
+
+namePrefix: dev-
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+
+configMapGenerator:
+  - name: django-env
+    env: envs/django.env
+
+secretGenerator:
+  - name: django-secrets
+    env: secrets/django.secrets
+  
+  - name: postgres-secrets
+    env: secrets/postgres.secrets
+  
