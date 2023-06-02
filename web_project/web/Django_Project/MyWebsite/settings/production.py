@@ -10,7 +10,7 @@ ALLOWED_HOSTS = ["localhost", "web", "proxy"]
 
 DATABASES = {
     "default": {
-        "ENGINE": config("DATABASE_ENGINE", default="django.db.backends.sqlite3"),
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
         "NAME": config("PG_DJ_DATABASE", default=os.path.join(BASE_DIR, "db.sqlite3")),
         "USER": config("PG_DJ_USER", default="user"),
         "PASSWORD": config("PG_DJ_PASSWORD", default="password"),
