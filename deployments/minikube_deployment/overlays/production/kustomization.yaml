@@ -1,13 +1,14 @@
-bases:
+resources:
   - ../../base
   - namespace.yaml
 
-namespace: development
+namespace: production
 
-namePrefix: dev-
+namePrefix: prod-
 
 patchesStrategicMerge:
-  - deployment-patch.yaml
+  - patches/nginx-deployment-patch.yaml
+  - patches/postgres-deployment-patch.yaml
 
 configMapGenerator:
   - name: django-env

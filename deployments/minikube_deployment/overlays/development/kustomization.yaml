@@ -1,4 +1,4 @@
-bases:
+resources:
   - ../../base
   - namespace.yaml
 
@@ -20,4 +20,3 @@ secretGenerator:
   
   - name: postgres-secrets
     env: secrets/postgres.secrets
-  
