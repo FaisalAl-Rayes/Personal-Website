@@ -33,7 +33,6 @@ services:
       - ../../web_project/web/.env
     depends_on:
       - db
-      # - vault
     restart: unless-stopped
     networks:
       - external-network
@@ -57,7 +56,7 @@ services:
     build:
       context: ../../web_project/prometheus
       dockerfile: Dockerfile.prometheus
-    container_name: prometheus
+    container_name: prometheus-server
     volumes:
       - prometheus-data:/prometheus/
     depends_on:
@@ -74,7 +73,7 @@ services:
     build:
       context: ../../web_project/grafana
       dockerfile: Dockerfile.grafana
-    container_name: grafana
+    container_name: grafana-server
     volumes:
       - grafana-data:/var/lib/grafana
     depends_on:
