@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: postgres-container
-          image: localhost:5000/django-postgres:latest
+          image: postgres:latest
           envFrom:
           - secretRef:
               name: postgres-secrets

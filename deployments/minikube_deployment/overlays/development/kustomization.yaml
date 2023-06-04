@@ -6,8 +6,6 @@ resources:
 
 namespace: development
 
-namePrefix: dev-
-
 patchesStrategicMerge:
   - patches/django-deployment-patch.yaml
   - patches/postgres-deployment-patch.yaml
@@ -19,8 +17,7 @@ configMapGenerator:
       - envs/shared/django_db.env
 
   - name: postgres-envs
-    envs:
-      - envs/shared/django_db.env
+    env: envs/shared/django_db.env
 
 secretGenerator:
   - name: django-secrets
