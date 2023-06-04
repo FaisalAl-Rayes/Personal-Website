@@ -1,5 +1,2 @@
 resources:
   - ingress.yaml
-  - nginx.yaml
-  # - django.yaml
-  - postgres.yaml

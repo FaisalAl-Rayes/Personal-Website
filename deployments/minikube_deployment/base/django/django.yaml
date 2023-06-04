@@ -5,7 +5,6 @@ metadata:
   labels:
     app: django
 spec:
-  replicas: 3
   selector:
     matchLabels:
       app: django
@@ -16,18 +15,14 @@ spec:
     spec:
       containers:
       - name: django
-        image: coming soon
-        imagePullPolicy: Always
+        image: localhost:5000/django-website
         envFrom:
           - secretRef:
-              name: django-env
-          - secretRef:
-              name: database-env
-        env:
-          - name: PORT
-            value: "8002"
+              name: django-secrets
+          - configMapRef:
+              name: django-envs
         ports:
-        - containerPort: 8002
+        - containerPort: 8000
         resources:
           limits:
             memory: 512Mi
@@ -35,10 +30,10 @@ spec:
           requests:
             memory: 256Mi
             cpu: "0.2"
-      imagePullSecrets:
-        - name: cfe-k8s   
-
-
+      # volumes:
+      #   - name: django-static-files
+      #     persistentVolumeClaim:
+      #       claimName: django-static-files-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -49,7 +44,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 80
-      targetPort: 8002
+      port: 8000
+      targetPort: 8000
   selector:
     app: django

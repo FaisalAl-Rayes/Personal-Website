@@ -1,8 +1,8 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: postgres-deployment
+  name: postgres-statefulset
   labels:
-    app: postgres
+    db: postgres
 spec:
-  replicas: 2
+  replicas: 3

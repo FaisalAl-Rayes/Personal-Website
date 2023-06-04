@@ -13,6 +13,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: nginx-service
+            name: django-web-service
             port: 
-              number: 80
+              number: 8000
