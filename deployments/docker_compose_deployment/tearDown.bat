@@ -1,2 +1,2 @@
 REM Tear down the website alongside its volumes.
-docker compose down --volumes
+START /B /WAIT docker compose down --volumes
